@@ -66,7 +66,7 @@ aws s3 cp ./example_file.txt s3://"$bucket_name"/example_file.txt
 # Create a Zip file to upload Lambda Function
 zip -r s3-lambda-function.zip ./s3-lambda-function
 
-sleep 5
+sleep 10
 # Create a Lambda function
 aws lambda create-function \
   --region "$aws_region" \
@@ -99,7 +99,7 @@ aws s3api put-bucket-notification-configuration \
 }'
 
 # Create an SNS topic and save the topic ARN to a variable
-topic_arn=$(aws sns create-topic --name s3-lambda-sns --output json | jq -r '.TopicArn')
+topic_arn=$(aws sns create-topic --name s3-lambda-sns --output json | --query -r '.TopicArn')
 
 # Print the TopicArn
 echo "SNS Topic ARN: $topic_arn"
@@ -117,6 +117,6 @@ aws sns subscribe \
 aws sns publish \
   --topic-arn "$topic_arn" \
   --subject "A new object created in s3 bucket" \
-  --message "Hello from Abhishek.Veeramalla YouTube channel, Learn DevOps Zero to Hero for Free"
+  --message "Hello from Hariom Kumar"
 
 
