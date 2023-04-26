@@ -1,5 +1,18 @@
 #!/bin/bash
 
+
+#########
+# This script will detch the aws id, and will create an bucket and IAM role and labmfa function will be called when something will be uploaded into bucket and we will get an email
+# via SNS,
+
+# Author: Hariom Kumar
+# Version: v1
+# Date: 26-april-2023
+#########
+
+
+
+
 set -x
 
 # Store the AWS account ID in a variable
