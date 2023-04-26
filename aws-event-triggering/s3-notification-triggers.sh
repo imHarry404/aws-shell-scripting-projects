@@ -45,7 +45,7 @@ role_response=$(aws iam create-role --role-name s3-lambda-sns --assume-role-poli
 }')
 
 # Extract the role ARN from the JSON response and store it in a variable
-role_arn=$(echo "$role_response" | jq -r '.Role.Arn')
+role_arn=$(echo "$role_response" | --query -r '.Role.Arn')
 
 # Print the role ARN
 echo "Role ARN: $role_arn"
