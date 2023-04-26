@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 #########
 # This script will detch the aws id, and will create an bucket and IAM role and labmfa function will be called when something will be uploaded into bucket and we will get an email
 # via SNS,
@@ -20,7 +19,6 @@ aws_account_id=$(aws sts get-caller-identity --query 'Account' --output text)
 
 # Print the AWS account ID from the variable
 echo "AWS Account ID: $aws_account_id"
-
 # Set AWS region and bucket name
 aws_region="us-east-1"
 bucket_name="harry-ultimate-bucket-for-aws-shell-scripting-project"
@@ -45,8 +43,8 @@ role_response=$(aws iam create-role --role-name s3-lambda-sns --assume-role-poli
 }')
 
 # Extract the role ARN from the JSON response and store it in a variable
-role_arn=$(echo "$role_response" | --query -r '.Role.Arn')
-
+#role_arn=$(echo "$role_response" | --query -r '.Role.Arn')
+role_arn=$(echo "$role_response" | jq -r '.Role.Arn')
 # Print the role ARN
 echo "Role ARN: $role_arn"
 
@@ -64,7 +62,8 @@ echo "Bucket creation output: $bucket_output"
 aws s3 cp ./example_file.txt s3://"$bucket_name"/example_file.txt
 
 # Create a Zip file to upload Lambda Function
-zip -r s3-lambda-function.zip ./s3-lambda-function
+#zip -r s3-lambda-function.zip ./s3-lambda-function
+zip -r s3-lambda-function.zip s3-lambda-function
 
 sleep 10
 # Create a Lambda function
@@ -85,7 +84,6 @@ aws lambda add-permission \
   --action "lambda:InvokeFunction" \
   --principal s3.amazonaws.com \
   --source-arn "arn:aws:s3:::$bucket_name"
-
 # Create an S3 event trigger for the Lambda function
 LambdaFunctionArn="arn:aws:lambda:us-east-1:$aws_account_id:function:s3-lambda-function"
 aws s3api put-bucket-notification-configuration \
@@ -99,8 +97,8 @@ aws s3api put-bucket-notification-configuration \
 }'
 
 # Create an SNS topic and save the topic ARN to a variable
-topic_arn=$(aws sns create-topic --name s3-lambda-sns --output json | --query -r '.TopicArn')
-
+#topic_arn=$(aws sns create-topic --name s3-lambda-sns --output json | --query -r '.TopicArn')
+topic_arn=$(aws sns create-topic --name s3-lambda-sns --output json | jq -r '.TopicArn')
 # Print the TopicArn
 echo "SNS Topic ARN: $topic_arn"
 
@@ -118,5 +116,3 @@ aws sns publish \
   --topic-arn "$topic_arn" \
   --subject "A new object created in s3 bucket" \
   --message "Hello from Hariom Kumar"
-
-
